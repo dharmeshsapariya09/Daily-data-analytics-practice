@@ -1,88 +1,127 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# -----------------------------------
-# 1. Create sample transaction data
-# -----------------------------------
-
-data = {
-    "customer_id": [101, 102, 101, 103, 104, 102, 105, 103, 101, 105],
-    "product": [
-        "Laptop", "Mouse", "Keyboard", "Monitor", "Laptop",
-        "Keyboard", "Mouse", "Laptop", "Monitor", "Keyboard"
-    ],
-    "quantity": [1, 2, 1, 2, 1, 3, 5, 1, 1, 2],
-    "price": [800, 25, 50, 200, 900, 45, 20, 850, 220, 55]
-}
-
-df = pd.DataFrame(data)
-
-print("Original Data:")
-print(df)
+# ============================================================
+# Project: Personal Expense Analyzer
+# Day: 1
+# Topic: Core Python Fundamentals
+# ============================================================
 
 
-# -----------------------------------
-# 2. Calculate transaction amount
-# -----------------------------------
+# STEP 1: Store expense transactions
 
-df["total_amount"] = df["quantity"] * df["price"]
-
-print("\nData with Total Amount:")
-print(df)
-
-
-# -----------------------------------
-# 3. Calculate total spending
-#    for each customer
-# -----------------------------------
-
-customer_spending = (
-    df.groupby("customer_id")["total_amount"]
-      .sum()
-      .reset_index()
-)
-
-print("\nTotal Spending by Each Customer:")
-print(customer_spending)
+expenses = [
+    {"category": "Food", "amount": 250},
+    {"category": "Transport", "amount": 120},
+    {"category": "Food", "amount": 350},
+    {"category": "Shopping", "amount": 1200},
+    {"category": "Bills", "amount": 800},
+    {"category": "Transport", "amount": 180},
+    {"category": "Food", "amount": 200},
+    {"category": "Entertainment", "amount": 500},
+    {"category": "Bills", "amount": 650},
+    {"category": "Shopping", "amount": 900},
+]
 
 
-# -----------------------------------
-# 4. Sort customers by spending
-# -----------------------------------
+# STEP 2: Define the monthly budget
 
-customer_spending = customer_spending.sort_values(
-    by="total_amount",
-    ascending=False
-)
-
-print("\nCustomers Sorted by Spending:")
-print(customer_spending)
+monthly_budget = 6000
 
 
-# -----------------------------------
-# 5. Select Top 5 customers
-# -----------------------------------
+# STEP 3: Calculate total expenditure
 
-top_5 = customer_spending.head(5)
+total_expense = 0
 
-print("\nTop 5 Customers:")
-print(top_5)
+for transaction in expenses:
+    total_expense += transaction["amount"]
 
 
-# -----------------------------------
-# 6. Visualize Top 5 Customers
-# -----------------------------------
+# STEP 4: Calculate average transaction amount
 
-plt.figure(figsize=(8, 5))
+number_of_transactions = len(expenses)
 
-plt.bar(
-    top_5["customer_id"].astype(str),
-    top_5["total_amount"]
-)
+average_expense = total_expense / number_of_transactions
 
-plt.xlabel("Customer ID")
-plt.ylabel("Total Spending")
-plt.title("Top 5 Customers by Total Spending")
 
-plt.tight_layout()
-plt.show()
+# STEP 5: Calculate spending by category
+
+category_totals = {}
+
+for transaction in expenses:
+
+    category = transaction["category"]
+    amount = transaction["amount"]
+
+    if category in category_totals:
+        category_totals[category] += amount
+    else:
+        category_totals[category] = amount
+
+
+# STEP 6: Identify the largest transaction
+
+largest_transaction = expenses[0]
+
+for transaction in expenses:
+
+    if transaction["amount"] > largest_transaction["amount"]:
+        largest_transaction = transaction
+
+
+# STEP 7: Calculate remaining budget
+
+remaining_budget = monthly_budget - total_expense
+
+
+# STEP 8: Generate the financial report
+
+print("=" * 45)
+print("       PERSONAL EXPENSE ANALYZER")
+print("=" * 45)
+
+print(f"Number of transactions : {number_of_transactions}")
+print(f"Total expenditure      : Rs. {total_expense:.2f}")
+print(f"Average transaction   : Rs. {average_expense:.2f}")
+
+print("\nCATEGORY-WISE EXPENDITURE")
+print("-" * 45)
+
+for category, amount in category_totals.items():
+
+    percentage = (amount / total_expense) * 100
+
+    print(
+        f"{category:<15} "
+        f"Rs. {amount:>7.2f} "
+        f"({percentage:5.1f}%)"
+    )
+
+
+print("\nLARGEST TRANSACTION")
+print("-" * 45)
+
+print(f"Category : {largest_transaction['category']}")
+print(f"Amount   : Rs. {largest_transaction['amount']:.2f}")
+
+
+print("\nMONTHLY BUDGET SUMMARY")
+print("-" * 45)
+
+print(f"Monthly budget    : Rs. {monthly_budget:.2f}")
+print(f"Total expenditure: Rs. {total_expense:.2f}")
+print(f"Remaining budget : Rs. {remaining_budget:.2f}")
+
+
+if remaining_budget > 0:
+
+    print("Status: Within budget.")
+
+elif remaining_budget == 0:
+
+    print("Status: Budget fully utilized.")
+
+else:
+
+    print(f"Status: Over budget by Rs. {abs(remaining_budget):.2f}")
+
+
+print("\nReport generated successfully!")
+print("=" * 45)
